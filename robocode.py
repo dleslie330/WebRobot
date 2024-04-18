@@ -1,5 +1,14 @@
 from time import sleep, time
 from machine import Pin, PWM
+import network
+import socket
+
+nic = network.WLAN(network.STA_IF)
+nic.active(True)
+nic.connect('iPhone', '4P8d-dYDs-zfsx-iKMB')
+print(nic.ifconfig())
+
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 flag = True
 
@@ -64,12 +73,17 @@ def main():
 
 try:
     button = Pin('GP22', Pin.IN, Pin.PULL_DOWN)
+    
+    s.bind(('192.168.0.1',8080))
+    print("server should be listening!")
 
     while flag:
-        if button.value():
-            sleep(.5)
-            main()
+        message = s.recv(2048)
+        print(message)
+        if message == "connection":
+            break
 
+        
 except KeyboardInterrupt:
     print("quitting program")
 

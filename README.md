@@ -54,5 +54,6 @@ TO-DO:
         - explain project
         - explain solutions
         - cool pictures of robot
+            -I grabbed one image of the robot so far. 
         - some circuit diagrams?
         - some very simple flow charts for code? -->

@@ -2,20 +2,33 @@
 Our Microcontrollers project where we are building and programming a robot to be controlled over a wifi connection
 
 ## Steps to operate
-### Wired
-* run `main.py` while tethered to Pico
-* Read ip address from terminal or look at `address.txt` generated once Pico is connected 
-* Paste the credentials in a web browser
-### Wireless
-* ensure `main.py` and `robot_functions` and `html_` are onboard the Pico
-* once power is connected to Pico, wait for onboard LED to be solid green
-* refresh web page in browser if nothing is displayed
-* control the PicoBot
-##
-
-
+* Turn on your devices hotspot, and store the SSID and Password in `network_\wifi_cred.py`
+* Plug the Pico in via the micro-USB, ensuring that pins 0 and 1 are being jumped with a wire
+* Copy `html_`, `robot_functions`, `network_` and `main.py` onboard the Pico
 ## Todo:
-* webcam 
+
+    build code for computer wifi interface with bot
+        - socket for python
+            - UDP socket
+        - send data on arrow-key? Do we want WASD?
+        - when to send:
+            - nothing pressed (stop)
+            - forward pressed (go forward)
+            - backward pressed (go backward)
+            - right pressed (go right)
+            - left pressed (go left)
+            - make them continual send, so bot keeps moving until change in instruction
+
+    get the robot moving from controls sent over wifi
+        - demo and record
+
+    Poster
+        - explain project
+        - explain solutions
+        - cool pictures of robot
+            -I grabbed one image of the robot so far. 
+        - some circuit diagrams?
+        - some very simple flow charts for code?
 ##
 
 <!-- What is here:

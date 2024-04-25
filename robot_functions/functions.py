@@ -145,8 +145,8 @@ class functions():
         self.pin_1A_l.high()
         self.pin_2A_l.low()
 
-    # def wait_for_a_second():
-    #     sleep(1)
+    def wait_for_a_second(self):
+        sleep(1)
 
     # def operate_until_t(t):
     #     sleep(t)

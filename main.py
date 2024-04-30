@@ -1,5 +1,5 @@
 import utime
-import math
+import usocket as socket
 from time import sleep
 import uasyncio
 import _thread
@@ -7,7 +7,6 @@ import machine
 from machine import Pin
 import network
 from robot_functions.functions import functions as fct
-from html_.index import html
 from network_.server_cred import server_cred as server_secrets
 from network_.wifi_cred import wifi as wifi_secrets
 
@@ -21,7 +20,7 @@ def inter(gate):
 start_pin_con.irq(handler=inter,trigger=start_pin.IRQ_RISING)
 
 # connect to WiFi
-def connect_to_wifi(ssid, password, ip):
+def connect_to_wifi(ssid, password):
     start = utime.time()
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
@@ -33,8 +32,6 @@ def connect_to_wifi(ssid, password, ip):
         if utime.time() - start > 10:
             return None
     if wlan.status() == 3:
-        print("no?")
-        wlan.ifconfig((ip, '255.255.255.0', '192.168.0.1', '8.8.8.8'))
         status = wlan.ifconfig()
         print("Connected as {}".format(status[0]))
         return wlan.ifconfig()[0]
@@ -49,61 +46,55 @@ def connect_to_wifi(ssid, password, ip):
         print("Resetting...")
         raise Exception('network connection failed')
 
-
-# Function to handle incoming requests
-async def handle_request(client, writer):
-    print("Client connected from:", client)
-    request = await client.read(1024)
-    request = str(request)
-    button_id = None
-    if 'GET /' in request:
-        button_id = request.split(' ')[1][1:]
-    protocol = 'HTTP/1.1 200 OK\n'
-    protocol += 'Content-Type: text/html\n'
-    protocol += 'Connection: close\n\n'
-    writer.write(protocol)
-    writer.write(html)
-    await writer.drain()
-    await writer.wait_closed()
-    if button_id:
-        print("Button", button_id, "clicked")
-        fun.set_operation(button_id)
+async def receive_data_from_server(sock):
+    
+    try:
+        while True:
+            data = sock.recv(1024) # buffer size is 1024 bytes
+            print("received message: %s" % data.decode())
+    except Exception as e:
+        print(e)
 
 async def main():
     wc = wifi_secrets()
     sc = server_secrets()
-    ssid = wc.ssid
-    password = wc.password
-    port = sc.port
-    ip = sc.ip
-    ip = connect_to_wifi(ssid,password,sc.ip)
+    ssid = wc.get_ssid()
+    password = wc.get_ssid()
+    port = sc.get_port()
+    ip = sc.get_ip()
+    ip = connect_to_wifi(ssid,password)
     while ip is None:
-        ip = connect_to_wifi(ssid,password,sc.ip)
-    print('Setting up webserver...')
+        ip = connect_to_wifi(ssid,password)
     fun.is_ready = True
     fun.set_status_ready()
     global ready 
-    ready = True
-    server = uasyncio.start_server(handle_request, ip, port) # type: ignore
-    print(ip)
-    print(port)
-    uasyncio.create_task(server)
-    print("Server is online")
+    ready = True 
+    # ip = "192.168.1.21"
+    # port = 8080
+    sock = socket.socket(socket.AF_INET, # Internet
+                        socket.SOCK_STREAM) # TCP
+    sock.connect((ip, port))
+    print("Connected to host")
+    sock.send("I'm the Pico!")
     while True:
         if fun.is_on:
+            data = sock.recv(1024) # buffer size is 1024 bytes
+            operation = data.decode()
+            print("received message: %s" % operation)
+            fun.operation = operation
             await uasyncio.sleep(0)
         else:
             break
 
 def robot_mobility():
+    curr_operation = ""
     while True:
         if ready:
-            print("ready!")
             while True:
-                if fun.operation:
+                if fun.operation != curr_operation:
                     print(fun.operation)
                     fun.do_operation()
-                    fun.set_operation("")
+                    curr_operation = fun.operation
 
 flag = False
 start_pin.high()
@@ -126,6 +117,9 @@ second_thread = _thread.start_new_thread(robot_mobility, ())
 try:
     # start asyncio tasks on first core
     uasyncio.run(main())
+
+except Exception as e:
+    print(e)
 finally:
     uasyncio.new_event_loop()
     fun.shut_off()

@@ -1,6 +1,12 @@
 
 class server_cred():
     def __init__(self) -> None:
-        self.ip = "192.168.137.111"
-        self.port = 5878
+        self.ip = "X.X.X.X"
+        self.port = 20001
+
+    def get_port(self):
+        return self.port
+
+    def get_ip(self):
+        return self.ip
     

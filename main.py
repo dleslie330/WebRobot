@@ -56,15 +56,17 @@ async def receive_data_from_server(sock):
         print(e)
 
 async def main():
+    print("hi!")
     wc = wifi_secrets()
     sc = server_secrets()
     ssid = wc.get_ssid()
-    password = wc.get_ssid()
+    password = wc.get_password()
     port = sc.get_port()
     ip = sc.get_ip()
-    ip = connect_to_wifi(ssid,password)
-    while ip is None:
-        ip = connect_to_wifi(ssid,password)
+    connecting = connect_to_wifi(ssid,password)
+    while connecting is None:
+        connecting = connect_to_wifi(ssid,password)
+        print(connecting)
     fun.is_ready = True
     fun.set_status_ready()
     global ready 
@@ -98,9 +100,13 @@ def robot_mobility():
 
 flag = False
 start_pin.high()
-while not flag:
+start = utime.time()
+while not flag and utime.time() - start < 10:
     print("Waiting to connect.")
     utime.sleep(1)
+if utime.time() - start:
+    machine.reset()
+    
 start_pin_con.irq(handler=None)
 
 # Setup PicoBot

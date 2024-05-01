@@ -56,7 +56,6 @@ async def receive_data_from_server(sock):
         print(e)
 
 async def main():
-    print("hi!")
     wc = wifi_secrets()
     sc = server_secrets()
     ssid = wc.get_ssid()
@@ -71,10 +70,11 @@ async def main():
     fun.set_status_ready()
     global ready 
     ready = True 
-    # ip = "192.168.1.21"
-    # port = 8080
     sock = socket.socket(socket.AF_INET, # Internet
                         socket.SOCK_STREAM) # TCP
+    
+    print(ip)
+    print(port)
     sock.connect((ip, port))
     print("Connected to host")
     sock.send("I'm the Pico!")
@@ -100,12 +100,12 @@ def robot_mobility():
 
 flag = False
 start_pin.high()
-start = utime.time()
-while not flag and utime.time() - start < 10:
+start = utime.ticks_ms()
+while not flag:
     print("Waiting to connect.")
     utime.sleep(1)
-if utime.time() - start:
-    machine.reset()
+    if utime.ticks_ms() - start < 10: # Prevent bot from starting itself!
+        machine.reset()
     
 start_pin_con.irq(handler=None)
 

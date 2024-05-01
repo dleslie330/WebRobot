@@ -10,8 +10,8 @@ def handle_sigint():
 
 signal.signal(signal.SIGINT, handle_sigint) # type: ignore
 
-choice = input("Will you be using a webcam? [Y]es or [N]o\nAnswer:")
-while choice != 'N' and choice != 'Y':
+choice = input("Will you be using a webcam? [Y]es or [N]o or [S]hutdown\nAnswer:")
+while choice != 'N' and choice != 'Y' and choice != 'S':
     choice = input("Please choose either 'Y' or 'N'. Will you be using a webcam? [Y]es or [N]o\nAnswer:")
 
 if choice == 'Y':
@@ -20,9 +20,12 @@ if choice == 'Y':
     server.initiate_camera()
 elif choice == 'N':
     server.there_is_webcam = False
+elif choice == 'S':
+    server.shutdown()
+    exit()
 else:
     print("Something unexpected happened")
-    server.shutdownServer()
+    server.shutdown()
     exit()
 
 

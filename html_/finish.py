@@ -30,7 +30,7 @@ html = """
 </head>
 <body>
     <div>
-        Thank you for driving the PicoBot. Please refresh the page to join the queue after about 10 seconds.
+        Thank you for driving the PicoBot. Please refresh the page to join the queue after about 30 seconds cooldown.
     </div>
     <button onclick="location.reload()">Refresh</button> <!-- Refresh button -->
 </body>

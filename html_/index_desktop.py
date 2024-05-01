@@ -82,10 +82,41 @@ html = """
         <button id="back" class="button">Back</button><br>
         <button id="disconnect" class="button">Disconnect</button><br>
     </div>
-    <div id="time-placeholder"></div>
+    <img id="videoPlayer" autoplay></img>
     <script>
         var buttonDown = false;
         var buttonID = "";
+
+        const videoPlayer = document.getElementById('videoPlayer');
+
+        // Function to fetch and display the MJPEG video stream
+        function playVideo() {
+            fetch('/video_stream')  // Request MJPEG video stream from server
+                .then(response => {
+                    const reader = response.body.getReader(); // Get the response body reader
+
+                    // Function to read and display MJPEG frames
+                    function readStream({ done, value }) {
+                        if (done) {
+                            console.log('Stream ended');
+                            return;
+                        }
+
+                        console.log('Received chunk:', value);
+
+                        // Convert received data to base64
+                        const base64String = btoa(String.fromCharCode.apply(null, new Uint8Array(value)));
+
+                        // Update the image source with the new JPEG data
+                        videoPlayer.src = `data:image/jpeg;base64,${base64String}`;
+                    }
+
+                })
+                .catch(error => console.error('Error fetching video stream:', error));
+
+        }
+
+        setInterval(playVideo, 100);
 
         function sendButton(buttonId) {
             // If the button pressed is "disconnect", request an HTML page from the server
@@ -167,6 +198,28 @@ html = """
                 location.reload();
             }
         }, 0);
+
+        // Function to fetch and play the video stream
+        function playVideo() {
+            fetch('/video_stream')  // Assuming the server endpoint is '/video_stream'
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob(); // Get the video stream as a Blob object
+                    } else {
+                        throw new Error('Failed to fetch video stream: ' + response.statusText);
+                    }
+                })
+                .then(blob => {
+                    // Convert the Blob object to a URL
+                    const videoUrl = URL.createObjectURL(blob);
+                    // Set the URL as the source of the <video> element
+                    document.getElementById('videoPlayer').src = videoUrl;
+                })
+                .catch(error => console.error('Error fetching video stream:', error));
+        }
+
+        // Call playVideo() function to start playing the video
+        setInterval(playVideo, 1000);
 
         // Function to update the time placeholder
         function updateTime(time) {

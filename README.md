@@ -1,3 +1,5 @@
+# UPDATE: DO NOT USE THIS BRANCH! main has the option of chooseing to have a webcam or not.
+
 # WebRobot
 Our Microcontrollers project where we are building and programming a robot to be controlled over a wifi connection
 

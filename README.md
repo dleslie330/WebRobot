@@ -2,32 +2,22 @@
 Our Microcontrollers project where we are building and programming a robot to be controlled over a wifi connection
 
 ## Steps to operate
-* Turn on your devices hotspot, and store the SSID and Password in `network_\wifi_cred.py`
-* Copy `html_`, `robot_functions`, `network_` and `main.py` onboard the Pico
-* Plug the Pico in via the micro-USB, ensuring that pins 0 and 1 are being jumped with a wire
-* Wait for PicoBot to finish blinking onboard LED, signalling it has connected to the wifi and a server is up and running
-* Unplug the jumper wire
-* To control the PicoBot, make sure a device is connected to the hotspot
-* Enter the `ip` address and `port` number from `network_\server_cred.py` into a web browser in the form: 
-    `xxx.xxx.xxx.xxx:XXXX`
-* Control the PicoBot. Once finished, be sure to hit QUIT button on webpage
+* Run `server_main.py`, and copy the IP and Port# displayed in the console. Put these as the attributes for `network_\server_cred.py`. 
+* Get the wifi credentials SSID and PASSWORD and put these as the attributes for put these as the attributes for `network_\wifi.py`. 
+* Copy `main.py`, `network_`, and `robot_functions` onboard the Pico. **Note: please see the correct way to build the PicoBot, since `robot_functions\functions.py` relies on the particular circuit.**
+* Plug the PicoBot in via micro USB, and short out pins 0 and 1 to launch the IRQ. The PicoBot's onboard LED should start to flash. After the LED has become solid green, the PicoBot is good to go and should have already connected to the server.
+* In your web browser, visit XXX.XXX.XXX.XXX:#### (IP:PORT), and control the robot.
+
+### Tips
+* FORWARD : moves bot forward
+* RIGHT : turns the bot right
+* BACK : moves the bot backward
+* LEFT : turns the bot left
+* DISCONNECT : disconnects you from server, and allows the next player to play
+* QUIT : shuts the bot off
+##
+
 ## Todo:
-
-    build code for computer wifi interface with bot
-        - socket for python
-            - UDP socket
-        - send data on arrow-key? Do we want WASD?
-        - when to send:
-            - nothing pressed (stop)
-            - forward pressed (go forward)
-            - backward pressed (go backward)
-            - right pressed (go right)
-            - left pressed (go left)
-            - make them continual send, so bot keeps moving until change in instruction
-
-    get the robot moving from controls sent over wifi
-        - demo and record
-
     Poster
         - explain project
         - explain solutions

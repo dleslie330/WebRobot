@@ -2,7 +2,7 @@ from server import WebServer
 import signal
 
 print("Starting server, please wait a moment...")
-server = WebServer(8080)
+server = WebServer(20000)
 
 def handle_sigint():
     print("Shutting down server")

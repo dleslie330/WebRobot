@@ -1,6 +1,6 @@
 import utime
 import usocket as socket
-from time import sleep
+from time import sleep, ticks_ms, ticks_diff
 import uasyncio
 import _thread
 import machine
@@ -100,12 +100,13 @@ def robot_mobility():
 
 flag = False
 start_pin.high()
-start = utime.ticks_ms()
+start = ticks_ms()
 while not flag:
     print("Waiting to connect.")
     utime.sleep(1)
-    if utime.ticks_ms() - start < 10: # Prevent bot from starting itself!
+    if ticks_diff(ticks_ms(),start) > 10000: # Prevent bot from starting itself! (10s)
         machine.reset()
+start_pin.low()
     
 start_pin_con.irq(handler=None)
 

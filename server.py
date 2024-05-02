@@ -22,7 +22,7 @@ class WebServer(object):
         self.port = port
         self.pico_client = None
         self.pico_client_address = None
-        self.mobile_pattern = re.compile(r'X11|Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera', re.I)
+        self.mobile_pattern = re.compile(r'Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera', re.I)
         self.desktop_pattern = re.compile(r'macOS|Windows|Linux', re.I)
         self.clients = list()
         self.current_client_address = None
@@ -233,12 +233,12 @@ class WebServer(object):
                     
                 if req == 'disconnect':
                     if address[0] == self.clients[0]:
+                        self.cool_down_clients.append(address[0])
                         self.remove_clients = True
                         self.reestablish_timings = True
                         self.current_client_disconnected = True
                         resp = self.build_response(html=True,finish=True)
                         client.send(resp.encode('utf-8')) # type: ignore
-                        self.cool_down_clients.append(address[0])
                         resp = self.build_response(html=True,close=True)
                         client.send(resp.encode('utf-8')) # type: ignore
                         client.close()
@@ -281,6 +281,7 @@ class WebServer(object):
                             resp = self.build_response(html=True,finish=True)
                             client.send(resp.encode('utf-8')) # type: ignore
                             self.cool_down_clients.append(address[0])
+                            self.remove_clients = True
                             resp = self.build_response(html=True,close=True)
                             client.send(resp.encode('utf-8'))        # type: ignore
                             client.close()
@@ -292,7 +293,7 @@ class WebServer(object):
 
                 if req == 'reload':  
                     if self.current_client_disconnected:
-                        if address[0] == self.current_client_address or address[0] in self.clients[1]:
+                        if address[0] == self.current_client_address:
                             data = {'status':' because someone left'}
                             resp = self.build_response(_json=True,json_data=data)
                             client.send(resp.encode('utf-8')) # type: ignore
@@ -343,8 +344,8 @@ class WebServer(object):
 
         except ConnectionAbortedError as cae:
             print("Client disconnected after listening:",cae)
-            # self.cool_down_clients.append(address[0])
-            # self.remove_clients = True
+            self.cool_down_clients.append(address[0])
+            self.remove_clients = True
 
         except Exception as e:
             print("General listening error:",e)
@@ -359,11 +360,12 @@ class WebServer(object):
                 if len(self.clients) != 0:
 
                     if self.remove_clients:
-                        for gone_client in self.cool_down_clients:
-                            for indx in range(len(self.clients)):
-                                if self.clients[indx] == gone_client:
-                                    addr = self.clients.pop(indx)
+                        for indx1 in range(len(self.cool_down_clients)):
+                            for indx2 in range(len(self.clients)):
+                                if self.clients[indx2] == self.cool_down_clients[indx1]:
+                                    addr = self.clients.pop(indx2)
                                     self.timings.pop(addr)
+                                    self.cool_down_clients.pop(indx1)
                         self.remove_clients = False
 
                     if self.pico_client_address in self.clients:

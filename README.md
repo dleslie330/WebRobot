@@ -4,8 +4,8 @@ Our Microcontrollers project where we are building and programming a robot to be
 ## Steps to operate
 * Install dependencies from `requirements.txt`. **Note: cv2 module needed to have webcam.**
 * Run `server_main.py`, and choose to create a server with a webcam (I used a Logitech HD1080p webcam), or not. **Note: if a webcam is chosen, be sure to have it plugged into the computer running as server.**
-* After the server started, copy the IP and Port# displayed in the console. Put these as the attributes for `network_\server_cred.py`. 
-* Setup a hotspot on the server machine, and get the wifi credentials SSID and PASSWORD and put these as the attributes for `network_\wifi.py`. 
+* After the server started, copy the IP and Port# displayed in the console. Put these as the attributes for `network_\server_cred.py`.
+* If there is no network administration and no device registeration required for the PicoBot, which is needed for UCAWIRELESS, then get the wifi credentials SSID and PASSWORD and put these as the attributes for `network_\wifi.py`. Otherwise, setup a hotspot on the server machine, and get the wifi credentials SSID and PASSWORD and put these as the attributes for `network_\wifi.py`. 
 * Copy `main.py`, `network_`, and `robot_functions` onboard the Pico. **Note: please see the correct way to build the PicoBot, since `robot_functions\functions.py` relies on the particular circuit.**
 * Plug the PicoBot in via micro USB, and short out pins 0 and 1 to launch the IRQ. The PicoBot's onboard LED should start to flash. After the LED has become solid green, the PicoBot is good to go and should have already connected to the server.
 * In your web browser, visit XXX.XXX.XXX.XXX:#### (IP:PORT), and control the robot.
